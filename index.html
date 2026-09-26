@@ -782,22 +782,19 @@ function predictMatch(competitionCode) {
 }
 
 // ============================================================
-// APPELS API — ⚡ PROXY CORS : allorigins.win
+// APPELS API — token passé dans l'URL via proxy allorigins
 // ============================================================
 async function fetchMatches(competition, token) {
-  const targetUrl = `${API_BASE}/competitions/${competition}/matches?status=SCHEDULED&limit=30`;
+  const targetUrl = `${API_BASE}/competitions/${competition}/matches?status=SCHEDULED&limit=30&X-Auth-Token=${token}`;
   const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
   try {
-    const res = await fetch(proxyUrl, {
-      method: 'GET',
-      headers: { 'X-Auth-Token': token, 'Accept': 'application/json' }
-    });
+    const res = await fetch(proxyUrl);
 
     if (!res.ok) {
-      if (res.status === 403) throw new Error("Token invalide ou non confirmé. Vérifie ton mail d'inscription.");
+      if (res.status === 403) throw new Error("Token invalide ou compétition non autorisée.");
       if (res.status === 429) throw new Error("Trop de requêtes — attends 1 minute.");
-      if (res.status === 404) throw new Error("Compétition non disponible en version gratuite.");
+      if (res.status === 404) throw new Error("Compétition non disponible en gratuit.");
       throw new Error(`Erreur ${res.status}`);
     }
 
@@ -805,7 +802,7 @@ async function fetchMatches(competition, token) {
     return data.matches || [];
   } catch (err) {
     if (err.message === "Failed to fetch") {
-      throw new Error("Connexion impossible. Vérifie ta connexion ou réessaie dans 1 minute.");
+      throw new Error("Connexion impossible. Réessaie dans 1 minute.");
     }
     throw err;
   }
