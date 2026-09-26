@@ -782,11 +782,11 @@ function predictMatch(competitionCode) {
 }
 
 // ============================================================
-// APPELS API — ⚡ SEULE PARTIE MODIFIÉE (proxy CORS intégré)
+// APPELS API — ⚡ PROXY CORS : allorigins.win
 // ============================================================
 async function fetchMatches(competition, token) {
   const targetUrl = `${API_BASE}/competitions/${competition}/matches?status=SCHEDULED&limit=30`;
-  const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
   try {
     const res = await fetch(proxyUrl, {
@@ -1051,4 +1051,4 @@ document.getElementById('loadBtn').addEventListener('click', async () => {
 });
 </script>
 </body>
-      </html>
+</html>
